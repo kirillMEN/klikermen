@@ -1,0 +1,148 @@
+<HTML>
+<HEAD>
+<TITLE>   Клик тестер. </TITLE>
+</HEAD>
+<BODY  bgcolor ="#F0FFF0">
+<table width="100%" height="100%" border="1">
+
+
+<tr  height="80%">
+<div dir="ltr" style="text-align: left;" trbidi="on">
+<div style="text-align: center;">
+<div style="text-align: left;">
+Клик тестер. Все просто. Жмем на кнопку "ЖМИ СЮДА", тем самым запускаем таймер в 10 секунд. Кликаем по кнопке как можно быстрее, и получаем результат ваших стараний :).<br>
+<br>
+</div>
+<br>
+<a name="more"></a><style type="text/css">
+    #ClickCount{
+        color: #666;
+        font-size: 70px;
+        font-weight: bold;
+    }
+    #ClickResultInfo{
+        color: #AAA;
+        font-size: 30px;
+    }
+    #ClickButton, #ClearClicksResult, #StopClicks{
+        width: 200px;
+        height: 100px;
+    }
+</style>
+
+<br>
+<div id="ClickCount">
+0</div>
+<div id="ClickResultInfo"><span>Ваш рекорд: 0 (0 кл./сек)</span></div>
+<div>
+<button id="ClickButton" onclick="ClickButtonPressed()">ЖМИ СЮДА</button>
+    <button disabled="disabled" id="ClearClicksResult" onclick="ClearClicksResultPressed()">CБРОС СЧЕТЧИКА</button>
+    <button disabled="disabled" id="StopClicks" onclick="StopClicks()">СТОП</button>
+</div>
+<script type="text/javascript">
+    var Clicks = 0, Timer = TestTime = 10;
+    var ClicksCount = document.getElementById("ClickCount");
+    var ClickResultInfo = document.getElementById("ClickResultInfo");
+    var ClickButton = document.getElementById("ClickButton");
+    var ClearClicksResult = document.getElementById("ClearClicksResult");
+    var StopClicksButton = document.getElementById("StopClicks");
+    var ClickInterval = null;
+    var ClicksOn = false;
+    var maxSore = 0;
+
+    if (document.cookie.length > 0) {
+        var cookieArr = document.cookie.toString().split(";");
+        for (var i = 0; i < cookieArr.length; i++) {
+            if (cookieArr[i].match(/_10sec_click_test_max_score/i)) {
+                maxSore = cookieArr[i].replace(/.*=(.*)/, "$1");
+            }
+        }
+    }
+
+    ClickResultInfo.innerHTML = '<span>Ваш рекорд: ' + maxSore + ' (' + maxSore / TestTime + ' кл./сек)</span>';
+
+    function setMaxScore(maxScore) {
+        var cDate = new Date();
+        cDate.setTime(cDate.getTime() + 5 * 365 * 24 * 60 * 60 * 1000);
+        document.cookie = "_10sec_click_test_max_score=" + maxScore + "; path=/; expires=" + cDate.toUTCString();
+    }
+
+    function ClickButtonPressed() {
+        if (!ClickInterval) {
+            StopClicksButton.removeAttribute("disabled");
+            ClickResultInfo.innerHTML = '<span>Осталось нажимать: ' + Timer + ' сек.</span>';
+            ClickInterval = setTimeout(TimerDown, 1000);
+            Timer--;
+        }
+        Clicks++;
+        ClicksCount.innerHTML = '<span>' + Clicks + '</span>';
+
+    }
+
+    function TimerDown() {
+        ClickResultInfo.innerHTML = '<span>Осталось нажимать: ' + Timer + ' сек.</span>';
+        if (Timer > 0) {
+            ClickInterval = setTimeout(TimerDown, 1000);
+            Timer--;
+        } else if (Timer == 0) {
+            clearTimeout(ClickInterval);
+            ClickButton.setAttribute("disabled", "disabled");
+            StopClicksButton.setAttribute("disabled", "disabled");
+            ClearClicksResult.removeAttribute("disabled");
+            if (maxSore < Clicks) {
+                maxSore = Clicks;
+                setMaxScore(Clicks);
+            }
+            ClickResultInfo.innerHTML = '<span>Ваш рекорд: ' + maxSore + ' (' + maxSore / TestTime + ' кл./сек)</span>';
+
+        }
+    }
+    function ClearClicksResultPressed() {
+        Clicks = 0;
+        Timer = TestTime;
+        ClickButton.removeAttribute("disabled");
+        ClearClicksResult.setAttribute("disabled", "disabled");
+        StopClicksButton.innerHTML = 'СТОП';
+        StopClicksButton.setAttribute("disabled", "disabled");
+        ClicksCount.innerHTML = '0';
+        ClickResultInfo.innerHTML = '<span>Ваш рекорд: ' + maxSore + ' (' + maxSore / TestTime + ' кл./сек)</span>';
+        ClickInterval = null;
+    }
+
+    function StopClicks() {
+        if (Timer > 0) {
+            if (ClickInterval) {
+                clearTimeout(ClickInterval);
+                ClickButton.setAttribute("disabled", "disabled");
+                ClearClicksResult.removeAttribute("disabled");
+                StopClicksButton.innerHTML = 'СТАРТ';
+                ClickInterval = null;
+            } else {
+                ClickInterval = setTimeout(TimerDown, 1000);
+                ClickButton.removeAttribute("disabled");
+                ClearClicksResult.setAttribute("disabled", "disabled");
+                StopClicksButton.innerHTML = 'СТОП';
+            }
+        } else {
+            StopClicksButton.setAttribute("disabled", "disabled");
+        }
+    }
+</script>
+ <span>Сигнал №1</span>
+                    <audio id="audio1" soundnum="1">
+                        <source src="Drugs.mp3">
+                       
+                    </audio>
+                    <input type="radio" soundnum="1" class="selectsoundbtn">Выбрать
+                    <input type="button" value="Прослушать" soundnum="1" class="playsoundbtn" id="playsoundbtn1">
+                    <input type="checkbox" soundnum="1" class="replaysoundbtn">Повторять
+                </div>
+</div>
+</tr></tbody>
+</table>
+</div>
+</div>
+</tr>
+</table>
+</BODY>
+</HTML>
